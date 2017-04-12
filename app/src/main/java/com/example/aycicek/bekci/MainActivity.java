@@ -52,13 +52,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Blurry.with(MainActivity.this)
-                .radius(25)
-                .sampling(1)
-                .color(Color.argb(66, 0, 255, 255))
-                .async()
-                .capture(findViewById(R.id.back_ground))
-                .into((ImageView) findViewById(R.id.back_ground));
 
 
         open_camera_button = (Button)findViewById(R.id.camera_open_button);
