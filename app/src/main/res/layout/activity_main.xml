@@ -2,40 +2,38 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_layout"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent">
-
-
-
-
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    android:background="@drawable/background_blur">
 
-
-    <include
-        layout="@layout/app_bar_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="BEKCI"
+        android:textColor="@android:color/white"
+        android:typeface="sans"
+        android:textSize="40sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="124dp" />
+
+    <Button
+        android:id="@+id/camera_open_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="TARAMAYA BASLA"
+        android:textColor="@android:color/holo_blue_light"
+        android:background="@drawable/border"
+        android:layout_marginTop="98dp"
+        android:textSize="20sp"
+        android:alpha="0.6"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true" />
 
 
-</android.support.v4.widget.DrawerLayout>
 
-    </RelativeLayout>
+</RelativeLayout>

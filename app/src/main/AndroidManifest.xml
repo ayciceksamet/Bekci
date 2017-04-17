@@ -22,7 +22,10 @@
 
         <activity
             android:name="com.example.aycicek.bekci.open_camera"
-            android:label="Bekci" >
+            android:label="Bekci"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:screenOrientation="landscape">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -31,5 +34,12 @@
         </activity>
 
     </application>
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.front.autofocus" android:required="false"/>
 
 </manifest>
