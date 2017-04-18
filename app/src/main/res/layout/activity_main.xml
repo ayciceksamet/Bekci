@@ -5,7 +5,7 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_blur">
+    android:background="@drawable/background_5">
 
     <TextView
         android:id="@+id/textView2"
@@ -15,22 +15,24 @@
         android:text="BEKCI"
         android:textColor="@android:color/white"
         android:typeface="sans"
-        android:textSize="40sp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="124dp" />
+        android:textSize="30sp"
+        android:alpha="0.8"
+        android:fontFamily="sans-serif-thin"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/camera_open_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="TARAMAYA BASLA"
-        android:textColor="@android:color/holo_blue_light"
+        android:layout_width="200dip"
+        android:layout_height="50dip"
+        android:text="TARA"
+        android:textColor="#fff"
         android:background="@drawable/border"
-        android:layout_marginTop="98dp"
-        android:textSize="20sp"
-        android:alpha="0.6"
+        android:textSize="15sp"
+        android:alpha="0.7"
+        android:gravity="top|center"
+        android:fontFamily="sans-serif-thin"
+        android:layout_marginTop="57dp"
         android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true" />
 
