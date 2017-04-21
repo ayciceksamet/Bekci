@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         open_camera_button = (Button)findViewById(R.id.camera_open_button);
-        open_camera_button.setGravity(Gravity.CENTER_HORIZONTAL);
+
         open_camera_button.setOnClickListener(new View.OnClickListener() {
 
             @Override

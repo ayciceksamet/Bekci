@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_5">
+    android:background="@drawable/background_6">
+
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="100dip"
+        android:layout_height="50dip"
+        android:src="@drawable/icon"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="141dp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -18,22 +29,36 @@
         android:textSize="30sp"
         android:alpha="0.8"
         android:fontFamily="sans-serif-thin"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="52dp"
+        android:layout_alignTop="@+id/imageView2"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="olur boyle vakalar, mobil bekci yakalar"
+        android:textColor="@android:color/white"
+        android:typeface="sans"
+        android:textSize="10sp"
+        android:alpha="0.8"
+        android:fontFamily="sans-serif-thin"
+        android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/camera_open_button"
         android:layout_width="200dip"
-        android:layout_height="50dip"
-        android:text="TARA"
-        android:textColor="#fff"
+        android:layout_height="wrap_content"
+        android:text="DEVRIYE"
         android:background="@drawable/border"
-        android:textSize="15sp"
         android:alpha="0.7"
-        android:gravity="top|center"
+        android:textStyle="bold"
+        android:textColor="#fff"
         android:fontFamily="sans-serif-thin"
-        android:layout_marginTop="57dp"
-        android:layout_below="@+id/textView2"
+        android:layout_marginTop="100dp"
+        android:layout_below="@+id/imageView2"
         android:layout_centerHorizontal="true" />
 
 
