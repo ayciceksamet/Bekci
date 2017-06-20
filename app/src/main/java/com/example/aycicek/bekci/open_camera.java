@@ -78,7 +78,6 @@ public class open_camera extends Activity implements CameraBridgeViewBase.CvCame
 
         setContentView(R.layout.open_camera);
 
-
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
 
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -117,7 +116,12 @@ public class open_camera extends Activity implements CameraBridgeViewBase.CvCame
     }
 
     public void onCameraViewStarted(int width, int height) {
+        previous_frame = new Mat(width, height, CvType.CV_64FC4);
+        current_frame = new Mat(width, height, CvType.CV_64FC4);
+        diff_frame = new Mat(width, height, CvType.CV_64FC4);
+
     }
+
 
     public void onCameraViewStopped() {
     }
