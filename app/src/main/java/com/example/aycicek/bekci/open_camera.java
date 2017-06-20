@@ -34,48 +34,17 @@ import java.lang.reflect.Method;
 
 public class open_camera extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
-   /* @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.open_camera);
-
-        Mat blur_background = null;
-        try {
-            blur_background = Utils.loadResource(this, R.drawable.back_ground, CvType.CV_8UC4);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        org.opencv.core.Size s = new Size(3,3);
-        Imgproc.GaussianBlur(blur_background, blur_background, s, 2);
-        LinearLayout back_ground_layout = (LinearLayout) findViewById(R.id.relative_layout);
-        Bitmap bmp = null;
-        Mat tmp = new Mat (blur_background.height(), blur_background.width(), CvType.CV_8U, new Scalar(4));
-        try {
-            bmp = Bitmap.createBitmap(tmp.cols(), tmp.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(tmp, bmp);
-        }
-        catch (CvException e){Log.d("Exception",e.getMessage());}
-
-        Drawable dr = new BitmapDrawable(bmp);
-        back_ground_layout.setBackground(dr);
-       /* Bitmap drawable_to_bitmap = drawableToBitmap(getDrawable(R.drawable.back_ground));
-        Bitmap fast = fastblur(drawable_to_bitmap, 10);
-
-        RelativeLayout background_layout = (RelativeLayout) findViewById(R.id.relative_layout);
-        Drawable backround_drawable = new BitmapDrawable(fast);
-
-        background_layout.setBackground(backround_drawable);
-       */
-
-
-
     private static final String TAG = "OCVSample::Activity";
 
     private CameraBridgeViewBase mOpenCvCameraView;
     private boolean              mIsJavaCamera = true;
+    private boolean  inputFrame_first_time = true;
     private MenuItem mItemSwitchCamera = null;
     private Mat mYuvFrameData;
     private Mat mRotated;
+    private Mat current_frame;
+    private Mat previous_frame;
+    private Mat diff_frame;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -153,9 +122,26 @@ public class open_camera extends Activity implements CameraBridgeViewBase.CvCame
     public void onCameraViewStopped() {
     }
 
+    public Mat processFrame(Mat proccessing_frame){
+        proccessing_frame.copyTo(current_frame);
+
+        if(inputFrame_first_time){
+            proccessing_frame.copyTo(previous_frame);
+            inputFrame_first_time = false;
+            Log.i("FIRST FRAME GET","FRAME LOG");
+        }
+        Core.absdiff(current_frame,previous_frame,diff_frame);
+        proccessing_frame.copyTo(previous_frame);
+        return diff_frame;
+    }
+
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
         Mat mRgba = inputFrame.rgba();
+
+        Imgproc.pyrDown(mRgba,mRgba);
+        mRgba = processFrame(mRgba);
+        Imgproc.resize(mRgba,mRgba,inputFrame.rgba().size());
         return mRgba;
     }
 

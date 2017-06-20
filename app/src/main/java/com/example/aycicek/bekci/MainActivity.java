@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -93,12 +95,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+
     @Override
     public void onResume()
     {
         super.onResume();
 
     }
+
+
 
 
 

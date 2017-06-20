@@ -29,8 +29,7 @@
         android:textSize="30sp"
         android:alpha="0.8"
         android:fontFamily="sans-serif-thin"
-        android:layout_marginTop="52dp"
-        android:layout_alignTop="@+id/imageView2"
+        android:layout_below="@+id/imageView2"
         android:layout_centerHorizontal="true" />
 
     <TextView
