@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -126,7 +127,7 @@ public class open_camera extends Activity implements CameraBridgeViewBase.CvCame
     public void onCameraViewStopped() {
     }
 
-    public Mat processFrame(Mat proccessing_frame){
+    public Mat isMotionDetected(Mat proccessing_frame){
         proccessing_frame.copyTo(current_frame);
 
         if(inputFrame_first_time){
@@ -136,15 +137,20 @@ public class open_camera extends Activity implements CameraBridgeViewBase.CvCame
         }
         Core.absdiff(current_frame,previous_frame,diff_frame);
         proccessing_frame.copyTo(previous_frame);
+
         return diff_frame;
     }
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
         Mat mRgba = inputFrame.rgba();
-
-        Imgproc.pyrDown(mRgba,mRgba);
-        mRgba = processFrame(mRgba);
+        Imgproc.pyrDown(mRgba, mRgba);
+        Imgproc.blur(mRgba, mRgba, new Size(20.0, 20.0));
+        Imgproc.cvtColor(mRgba, mRgba, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.adaptiveThreshold(mRgba, mRgba, 255,
+               Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY_INV, 15, 4);
+        Imgproc.dilate(mRgba, mRgba, Imgproc.getStructuringElement(Imgproc.CV_SHAPE_RECT, new Size(20, 20)));
+        mRgba = isMotionDetected(mRgba);
         Imgproc.resize(mRgba,mRgba,inputFrame.rgba().size());
         return mRgba;
     }
