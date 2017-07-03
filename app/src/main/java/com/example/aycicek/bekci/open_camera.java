@@ -164,7 +164,6 @@ public class open_camera extends Activity implements CameraBridgeViewBase.CvCame
         if(motionDetected) {
             playAlarm();
 
-
         }
         else{
             stopAlarm();
@@ -189,7 +188,9 @@ public class open_camera extends Activity implements CameraBridgeViewBase.CvCame
     private void playAlarm() {
         MediaPlayer mp = MediaPlayer.create(this,
                 R.raw.alarm4);
-        mp.start();
+        if(!mp.isPlaying()) {
+            mp.start();
+        }
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
             @Override
