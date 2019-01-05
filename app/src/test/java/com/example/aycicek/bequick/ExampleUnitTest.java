@@ -1,4 +1,4 @@
-package com.example.aycicek.bekci;
+package com.example.aycicek.bequick;
 
 import org.junit.Test;
 

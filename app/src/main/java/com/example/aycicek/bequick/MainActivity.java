@@ -1,50 +1,32 @@
-package com.example.aycicek.bekci;
+package com.example.aycicek.bequick;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import jp.wasabeef.blurry.Blurry;
-import android.graphics.Color;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.Toast;
+import android.content.Context;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.CvException;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
-import java.io.IOException;
-import java.nio.channels.DatagramChannel;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
     private static Button open_camera_button;
     private Mat blur_background = null;
+    private int counter;
+    private Context context;
 
     static {
         System.loadLibrary("opencv_java3");
@@ -60,8 +42,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("LOG", "Trying to load OpenCV library");
 
-
         setContentView(R.layout.activity_main);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        context = getApplicationContext();
+
+        MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.actiontheme);
+
+        mediaPlayer.start();
 
         open_camera_button = (Button)findViewById(R.id.camera_open_button);
 
@@ -69,14 +59,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent open_camera = new Intent(MainActivity.this, open_camera.class);
-                startActivity(open_camera);
+
+                new CountDownTimer(5000, 1000){
+                    public void onTick(long millisUntilFinished){
+                        Toast.makeText(MainActivity.this, "Hold your phone steady in " + String.valueOf(TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)) + " seconds", Toast.LENGTH_SHORT).show();
+                    }
+                    public  void onFinish(){
+
+                        Intent open_camera = new Intent(MainActivity.this, OpenCamera.class);
+                        startActivity(open_camera);
+                    }
+                }.start();
+
             }
         });
-
-
-
-
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -95,18 +91,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
     @Override
     public void onResume()
     {
         super.onResume();
 
     }
-
-
-
-
-
 
 }
