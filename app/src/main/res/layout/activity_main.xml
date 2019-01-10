@@ -74,6 +74,7 @@
             android:id="@+id/radioEasy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:checked="true"
             android:text="easy" />
 
@@ -81,6 +82,7 @@
             android:id="@+id/radioNormal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:layout_alignStart="@+id/textView3"
             android:layout_below="@+id/camera_open_button"
             android:text="medium" />
@@ -89,14 +91,11 @@
             android:id="@+id/radioHard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
             android:layout_alignStart="@+id/textView3"
             android:layout_below="@+id/camera_open_button"
             android:text="hard" />
 
-
-
     </RadioGroup>
-
-
 
 </RelativeLayout>

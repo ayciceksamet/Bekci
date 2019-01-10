@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.Toast;
 import android.content.Context;
 
@@ -26,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private static Button open_camera_button;
     private Mat blur_background = null;
     private int counter;
+
+
+    public int difficultydegree;
     private Context context;
 
     static {
@@ -49,10 +53,12 @@ public class MainActivity extends AppCompatActivity {
 
         context = getApplicationContext();
 
-        MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.actiontheme);
+        final MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.actiontheme);
 
         mediaPlayer.start();
 
+        setDifficultydegree(40000);
+        
         open_camera_button = (Button)findViewById(R.id.camera_open_button);
 
         open_camera_button.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
                     public  void onFinish(){
 
                         Intent open_camera = new Intent(MainActivity.this, OpenCamera.class);
+                        open_camera.putExtra("chosendifficulty",getDifficultydegree());
+                        mediaPlayer.stop();
                         startActivity(open_camera);
                     }
                 }.start();
@@ -90,6 +98,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radioEasy:
+                if (checked){
+                    setDifficultydegree(40000);
+                }
+                    break;
+            case R.id.radioNormal:
+                if (checked){
+                    setDifficultydegree(25000);
+                }
+                    break;
+            case R.id.radioHard:
+                if (checked){
+                    setDifficultydegree(10000);
+                }
+                    break;
+        }
+    }
+
+    public int getDifficultydegree() {
+        return difficultydegree;
+    }
+
+    public void setDifficultydegree(int difficultydegree) {
+        this.difficultydegree = difficultydegree;
+    }
+
 
     @Override
     public void onResume()

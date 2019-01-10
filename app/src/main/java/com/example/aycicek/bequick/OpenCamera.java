@@ -29,6 +29,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -38,6 +39,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import static org.opencv.core.Core.FONT_HERSHEY_TRIPLEX;
+import static org.opencv.core.CvType.CV_8UC3;
+import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.drawContours;
+import static org.opencv.imgproc.Imgproc.putText;
 
 public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
@@ -62,8 +69,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
     List<MatOfPoint> contours;
     private Scalar colorDrawing = new Scalar(25, 50, 50, 0);
     private static final int MY_CAMERA_REQUEST_CODE = 100;
-
-    private SoundPool soundPool;
+    private int difficultydegree;
     private int soundID;
     boolean loaded = false;
 
@@ -108,6 +114,12 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.open_camera);
+
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            setDifficultydegree(extras.getInt("chosendifficulty"));
+        }
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
 
@@ -185,11 +197,11 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
     public boolean isMotionReal(Mat processingRealFrame, List<MatOfPoint> contours) {
 
         for (int i = 0; i < contours.size(); i++) {
-            if (Imgproc.contourArea(contours.get(i)) > 7500) {
+            if (Imgproc.contourArea(contours.get(i)) > getDifficultydegree()) {
                 org.opencv.core.Rect rect = Imgproc.boundingRect(contours.get(i));
-                if (rect.height > 28) {
+             //   if (rect.height > 28) {
                     motionDetected = true;
-                }
+          //      }
             }
         }
         return motionDetected;
@@ -197,12 +209,8 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
 
     public void processAlarm(boolean motionDetected) {
         if (motionDetected) {
-           // playAlarm();
-
-        } else {
-           // stopAlarm();
+            SoundManager.getInstance().playTryAgainSound();
         }
-
     }
 
     public void startTimer() {
@@ -224,6 +232,14 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         } else {
             Log.d(TAG_DEBUG, " The system is already locked !");
         }
+    }
+
+    public int getDifficultydegree() {
+        return difficultydegree;
+    }
+
+    public void setDifficultydegree(int difficultydegree) {
+        this.difficultydegree = difficultydegree;
     }
 
     public boolean isShakeDetected() {
@@ -262,8 +278,10 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         Imgproc.threshold(mRgba, mRgba, 50, 255, Imgproc.THRESH_BINARY);
         contours = new ArrayList<MatOfPoint>();
         Mat hierarchy = new Mat();
+        Imgproc.pyrUp(mRgba, mRgba);
         Imgproc.findContours(mRgba, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         motionDetected = isMotionReal(mRgba, contours);
+
 
         if(!isLockSystem()){
             processAlarm(motionDetected);
@@ -275,20 +293,32 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
 
         if (!isShakeDetected()) {
             if (!contours.isEmpty()) {
-                for (int idx = 0; idx >= 0; idx = (int) hierarchy.get(0, idx)[0]) {
-                    MatOfPoint matOfPoint = contours.get(idx);
+                for (int i = 0; i < contours.size(); i++) {
+                    MatOfPoint matOfPoint = contours.get(i);
                     Rect rect = Imgproc.boundingRect(matOfPoint);
-                    Imgproc.rectangle(mRgbaFinal, rect.tl(), rect.br(), new Scalar(255, 255, 0), 16);
+                    Scalar color = new Scalar( 255, 255, 0);
+                    if(Imgproc.contourArea(contours.get(i)) > getDifficultydegree()) {
+                        putText(mRgbaFinal," + ACTION DETECTED",new Point(20,20),
+                                FONT_HERSHEY_TRIPLEX, 1,new Scalar( 255, 255, 0),1);
+                        drawContours(mRgbaFinal, contours, i, color, -1);
+                    }
+                 /*   */
                 }
             }
         } else {
-            Imgproc.putText(mRgbaFinal, "Hold the phone Steady !", new org.opencv.core.Point(250, 250),
+            putText(mRgbaFinal, "Hold the phone Steady !", new org.opencv.core.Point(250, 250),
                     Core.FONT_HERSHEY_SIMPLEX,
                     2.6f,
                     new Scalar(155, 155, 0), // color in BGR format, you should change this one
                     3 // thickness (can be used to achieve bold
             );
         }
+        Scalar colorfilter = new Scalar( 10, 230, 10);
+        Mat overlay = new Mat(mRgbaFinal.rows(),mRgbaFinal.cols(),CV_8UC3,colorfilter);
+        cvtColor(overlay,overlay,Imgproc.COLOR_BGR2RGB);
+        cvtColor(mRgbaFinal,mRgbaFinal,Imgproc.COLOR_BGR2RGB);
+        Core.addWeighted(overlay, 0.4, mRgbaFinal, 0.6, 1,  mRgbaFinal);
+
         return mRgbaFinal;
     }
 }
