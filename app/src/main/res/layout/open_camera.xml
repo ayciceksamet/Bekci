@@ -1,18 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:opencv="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:id="@+id/relative_layout"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+
 
     <org.opencv.android.JavaCameraView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:visibility="gone"
+        android:id="@+id/camera_preview" />
 
-        android:id="@+id/tutorial1_activity_java_surface_view"
-        opencv:show_fps="true"
-        opencv:camera_id="any" />
+    <Button
+        android:id="@+id/button_switchcam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/button_capture"
+        android:layout_marginEnd="10dp" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/button_capture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText"
+        android:layout_below="@+id/button_switchcam"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="192dp" />
+
+</RelativeLayout>

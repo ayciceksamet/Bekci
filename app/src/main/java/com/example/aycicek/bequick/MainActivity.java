@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.start();
 
         setDifficultydegree(40000);
-        
+
         open_camera_button = (Button)findViewById(R.id.camera_open_button);
 
         open_camera_button.setOnClickListener(new View.OnClickListener() {

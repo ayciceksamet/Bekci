@@ -2,23 +2,16 @@ package com.example.aycicek.bequick;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
+
 import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.widget.Toast;
 import android.os.*;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -36,9 +29,6 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import static org.opencv.core.Core.FONT_HERSHEY_TRIPLEX;
 import static org.opencv.core.CvType.CV_8UC3;
@@ -52,27 +42,20 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
     private static final String TAG_DEBUG = "debug::oncamera";
 
     private CameraBridgeViewBase mOpenCvCameraView;
-    private boolean mIsJavaCamera = true;
     private boolean inputFrame_first_time = true;
-    private MenuItem mItemSwitchCamera = null;
-    private Mat mYuvFrameData;
-    private Mat mRotated;
     private Mat current_frame;
     private Mat previous_frame;
     private Mat diff_frame;
-    private Mat output_frame;
     private boolean shakeDetected = false;
     private boolean motionDetected = false;
-    private boolean counterTimeOut = false;
     private boolean lockSystem = false;
     private ShakeListener mShaker;
     List<MatOfPoint> contours;
-    private Scalar colorDrawing = new Scalar(25, 50, 50, 0);
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private int difficultydegree;
-    private int soundID;
     boolean loaded = false;
-
+    private Context context;
+    private MediaPlayer mediaPlayer;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -107,7 +90,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
                     new String[]{Manifest.permission.CAMERA},
                     MY_CAMERA_REQUEST_CODE);
         }
-
+        context = getApplicationContext();
         Log.i(TAG, "called onCreate");
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -121,11 +104,14 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
             setDifficultydegree(extras.getInt("chosendifficulty"));
         }
 
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_preview);
 
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 
         mOpenCvCameraView.setCvCameraViewListener(this);
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.failalarmsound);
+
 
         mShaker = new ShakeListener(this);
         mShaker.setOnShakeListener(new ShakeListener.OnShakeListener() {
@@ -163,6 +149,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         }
     }
 
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null)
@@ -173,8 +160,6 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         previous_frame = new Mat(width, height, CvType.CV_64FC4);
         current_frame = new Mat(width, height, CvType.CV_64FC4);
         diff_frame = new Mat(width, height, CvType.CV_64FC4);
-        output_frame = new Mat(width, height, CvType.CV_64FC4);
-
     }
 
     public void onCameraViewStopped() {
@@ -209,7 +194,8 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
 
     public void processAlarm(boolean motionDetected) {
         if (motionDetected) {
-            SoundManager.getInstance().playTryAgainSound();
+            mediaPlayer.start();
+            Log.d(TAG_DEBUG,"FAIL ALARIM!!!");
         }
     }
 
@@ -287,22 +273,21 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
             processAlarm(motionDetected);
         }
 
-        motionDetected = false;
+
         Imgproc.resize(mRgba, mRgba, inputFrame.rgba().size());
         Imgproc.resize(mRgbaFinal, mRgbaFinal, inputFrame.rgba().size());
 
         if (!isShakeDetected()) {
-            if (!contours.isEmpty()) {
+            if (!contours.isEmpty() && motionDetected) {
                 for (int i = 0; i < contours.size(); i++) {
                     MatOfPoint matOfPoint = contours.get(i);
                     Rect rect = Imgproc.boundingRect(matOfPoint);
                     Scalar color = new Scalar( 255, 255, 0);
                     if(Imgproc.contourArea(contours.get(i)) > getDifficultydegree()) {
-                        putText(mRgbaFinal," + ACTION DETECTED",new Point(20,20),
+                        putText(mRgbaFinal," +!!! ALARM !!!",new Point(500,500),
                                 FONT_HERSHEY_TRIPLEX, 1,new Scalar( 255, 255, 0),1);
                         drawContours(mRgbaFinal, contours, i, color, -1);
                     }
-                 /*   */
                 }
             }
         } else {
@@ -318,7 +303,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         cvtColor(overlay,overlay,Imgproc.COLOR_BGR2RGB);
         cvtColor(mRgbaFinal,mRgbaFinal,Imgproc.COLOR_BGR2RGB);
         Core.addWeighted(overlay, 0.4, mRgbaFinal, 0.6, 1,  mRgbaFinal);
-
+        motionDetected = false;
         return mRgbaFinal;
     }
 }
