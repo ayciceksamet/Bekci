@@ -11,8 +11,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 import android.os.*;
+import android.widget.Button;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -49,6 +51,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
     private boolean shakeDetected = false;
     private boolean motionDetected = false;
     private boolean lockSystem = false;
+    private boolean userisReady = false;
     private ShakeListener mShaker;
     List<MatOfPoint> contours;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
@@ -56,6 +59,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
     boolean loaded = false;
     private Context context;
     private MediaPlayer mediaPlayer;
+    private MediaPlayer timecount;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -103,6 +107,12 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         if (extras != null) {
             setDifficultydegree(extras.getInt("chosendifficulty"));
         }
+
+        final MediaPlayer mediaPlayertheme = MediaPlayer.create(context, R.raw.missionimpossibletheme);
+
+        timecount = MediaPlayer.create(context, R.raw.countdownready);
+
+        mediaPlayertheme.start();
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_preview);
 
@@ -252,6 +262,21 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         this.lockSystem = lockSystem;
     }
 
+    public void readyButtonClicked(View v){
+        setUserisReady(true);
+        timecount.start();
+    }
+
+    public boolean isUserisReady() {
+        return userisReady;
+    }
+
+    public void setUserisReady(boolean userisReady) {
+        Button button_confirm = (Button) findViewById(R.id.button_confirm);
+        this.userisReady = userisReady;
+        button_confirm.setVisibility(View.GONE);
+    }
+
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
 
         Mat mRgba = inputFrame.rgba();
@@ -269,10 +294,9 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         motionDetected = isMotionReal(mRgba, contours);
 
 
-        if(!isLockSystem()){
+        if(!isLockSystem() && isUserisReady()){
             processAlarm(motionDetected);
         }
-
 
         Imgproc.resize(mRgba, mRgba, inputFrame.rgba().size());
         Imgproc.resize(mRgbaFinal, mRgbaFinal, inputFrame.rgba().size());
@@ -291,14 +315,14 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
                 }
             }
         } else {
-            putText(mRgbaFinal, "Hold the phone Steady !", new org.opencv.core.Point(250, 250),
+            putText(mRgbaFinal, "Hold the phone steady !", new org.opencv.core.Point(250, 250),
                     Core.FONT_HERSHEY_SIMPLEX,
                     2.6f,
                     new Scalar(155, 155, 0), // color in BGR format, you should change this one
                     3 // thickness (can be used to achieve bold
             );
         }
-        Scalar colorfilter = new Scalar( 10, 230, 10);
+        Scalar colorfilter = new Scalar( 10, 150, 10);
         Mat overlay = new Mat(mRgbaFinal.rows(),mRgbaFinal.cols(),CV_8UC3,colorfilter);
         cvtColor(overlay,overlay,Imgproc.COLOR_BGR2RGB);
         cvtColor(mRgbaFinal,mRgbaFinal,Imgproc.COLOR_BGR2RGB);
