@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public int difficultydegree;
+    public int cameraData;
     private Context context;
 
     static {
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         setDifficultydegree(40000);
 
+        setCameraData(1);
+
         open_camera_button = (Button)findViewById(R.id.camera_open_button);
 
         open_camera_button.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent open_camera = new Intent(MainActivity.this, OpenCamera.class);
                         open_camera.putExtra("chosendifficulty",getDifficultydegree());
+                        open_camera.putExtra("cameradata",getCameraData());
                         mediaPlayer.stop();
                         startActivity(open_camera);
                     }
@@ -122,6 +126,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onRadioButtonClickedCamera(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.front:
+                if (checked){
+                    setCameraData(1);
+                }
+                break;
+            case R.id.back:
+                if (checked){
+                    setCameraData(0);
+                }
+                break;
+        }
+    }
+
     public int getDifficultydegree() {
         return difficultydegree;
     }
@@ -130,6 +152,13 @@ public class MainActivity extends AppCompatActivity {
         this.difficultydegree = difficultydegree;
     }
 
+    public int getCameraData() {
+        return cameraData;
+    }
+
+    public void setCameraData(int cameraData) {
+        this.cameraData = cameraData;
+    }
 
     @Override
     public void onResume()

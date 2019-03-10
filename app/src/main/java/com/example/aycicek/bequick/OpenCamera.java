@@ -3,6 +3,7 @@ package com.example.aycicek.bequick;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 
 import android.media.MediaPlayer;
@@ -58,8 +59,11 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
     private int difficultydegree;
     boolean loaded = false;
     private Context context;
-    private MediaPlayer mediaPlayer;
-    private MediaPlayer timecount;
+    private MediaPlayer mediaPlayerFail;
+    private MediaPlayer mediaPlayerTimecount;
+    private MediaPlayer mediaPlayerTheme;
+    private int cameraData;
+    private Vibrator v;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -97,31 +101,28 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         context = getApplicationContext();
         Log.i(TAG, "called onCreate");
         super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.open_camera);
 
         Bundle extras = getIntent().getExtras();
-
         if (extras != null) {
             setDifficultydegree(extras.getInt("chosendifficulty"));
+            setCameraData(extras.getInt("cameraData"));
         }
 
-        final MediaPlayer mediaPlayertheme = MediaPlayer.create(context, R.raw.missionimpossibletheme);
-
-        timecount = MediaPlayer.create(context, R.raw.countdownready);
-
-        mediaPlayertheme.start();
+        mediaPlayerTheme = MediaPlayer.create(context, R.raw.missionimpossibletheme);
+        mediaPlayerTimecount = MediaPlayer.create(context, R.raw.countdownready);
+        mediaPlayerFail = MediaPlayer.create(context, R.raw.failalarmsound);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_preview);
-
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-
         mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.setCameraIndex(getCameraData());
 
-        mediaPlayer = MediaPlayer.create(context, R.raw.failalarmsound);
-
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         mShaker = new ShakeListener(this);
         mShaker.setOnShakeListener(new ShakeListener.OnShakeListener() {
@@ -172,6 +173,26 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         diff_frame = new Mat(width, height, CvType.CV_64FC4);
     }
 
+    private void playTheme(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(isUserisReady()){
+                    mediaPlayerTheme.start();
+                }
+            }
+        }).start();
+    }
+
+    private void vibrate(){
+    // Start without a delay
+    // Each element then alternates between vibrate, sleep, vibrate, sleep...
+        long[] pattern = {0, 100, 1000};
+
+    // The '-1' here means to vibrate once, as '-1' is out of bounds in the pattern array
+        v.vibrate(pattern, -1);
+
+    }
     public void onCameraViewStopped() {
     }
 
@@ -204,7 +225,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
 
     public void processAlarm(boolean motionDetected) {
         if (motionDetected) {
-            mediaPlayer.start();
+            mediaPlayerFail.start();
             Log.d(TAG_DEBUG,"FAIL ALARIM!!!");
         }
     }
@@ -223,6 +244,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
                 public void afterDelay() {
                     setLockSystem(false);
                     Log.d(TAG_DEBUG, " The system is unlocked !");
+                    v.cancel();
                 }
             });
         } else {
@@ -264,7 +286,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
 
     public void readyButtonClicked(View v){
         setUserisReady(true);
-        timecount.start();
+        playTheme();
     }
 
     public boolean isUserisReady() {
@@ -275,6 +297,15 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         Button button_confirm = (Button) findViewById(R.id.button_confirm);
         this.userisReady = userisReady;
         button_confirm.setVisibility(View.GONE);
+        mediaPlayerTimecount.start();
+    }
+
+    public int getCameraData() {
+        return this.cameraData;
+    }
+
+    public void setCameraData(int cameraData) {
+        this.cameraData = cameraData;
     }
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
@@ -315,12 +346,13 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
                 }
             }
         } else {
-            putText(mRgbaFinal, "Hold the phone steady !", new org.opencv.core.Point(250, 250),
+            /*putText(mRgbaFinal, "Hold the phone steady !", new org.opencv.core.Point(250, 250),
                     Core.FONT_HERSHEY_SIMPLEX,
                     2.6f,
                     new Scalar(155, 155, 0), // color in BGR format, you should change this one
                     3 // thickness (can be used to achieve bold
-            );
+            );*/
+            vibrate();
         }
         Scalar colorfilter = new Scalar( 10, 150, 10);
         Mat overlay = new Mat(mRgbaFinal.rows(),mRgbaFinal.cols(),CV_8UC3,colorfilter);
@@ -328,6 +360,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         cvtColor(mRgbaFinal,mRgbaFinal,Imgproc.COLOR_BGR2RGB);
         Core.addWeighted(overlay, 0.4, mRgbaFinal, 0.6, 1,  mRgbaFinal);
         motionDetected = false;
+        Core.flip(mRgbaFinal,mRgbaFinal,1);
         return mRgbaFinal;
     }
 }

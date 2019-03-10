@@ -61,8 +61,10 @@
         android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true" />
 
+
+
     <RadioGroup
-        android:id="@+id/radioSex"
+        android:id="@+id/radioLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -91,11 +93,54 @@
             android:id="@+id/radioHard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onRadioButtonClicked"
             android:layout_alignStart="@+id/textView3"
             android:layout_below="@+id/camera_open_button"
+            android:onClick="onRadioButtonClicked"
             android:text="hard" />
 
     </RadioGroup>
+
+    <TextView
+        android:id="@+id/textViewCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="choose camera"
+        android:textColor="@android:color/darker_gray"
+        android:typeface="sans"
+        android:textSize="15sp"
+        android:alpha="1"
+        android:fontFamily="sans-serif-thin"
+        android:layout_marginTop="19dp"
+        android:layout_below="@+id/radioLevel"
+        android:layout_centerHorizontal="true" />
+
+    <RadioGroup
+        android:id="@+id/radioCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginEnd="11dp"
+        android:layout_below="@+id/textViewCamera"
+        android:layout_alignEnd="@+id/radioLevel">
+
+        <RadioButton
+            android:id="@+id/radioFront"
+            android:layout_width="87dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:onClick="onRadioButtonClickedCamera"
+            android:text="front" />
+
+        <RadioButton
+            android:id="@+id/radioBack"
+            android:layout_width="79dp"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClickedCamera"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_below="@+id/camera_open_button"
+            android:text="back" />
+
+    </RadioGroup>
+
 
 </RelativeLayout>
