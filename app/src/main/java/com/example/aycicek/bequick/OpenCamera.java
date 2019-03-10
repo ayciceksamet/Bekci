@@ -110,7 +110,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             setDifficultydegree(extras.getInt("chosendifficulty"));
-            setCameraData(extras.getInt("cameraData"));
+            setCameraData(extras.getInt("cameradata"));
         }
 
         mediaPlayerTheme = MediaPlayer.create(context, R.raw.missionimpossibletheme);
