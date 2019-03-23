@@ -145,6 +145,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         super.onPause();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+        mediaPlayerTheme.stop();
     }
 
     @Override
@@ -165,6 +166,8 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
         super.onDestroy();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+        mediaPlayerTheme.stop();
+
     }
 
     public void onCameraViewStarted(int width, int height) {
@@ -179,6 +182,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
             public void run() {
                 if(isUserisReady()){
                     mediaPlayerTheme.start();
+                    mediaPlayerTheme.setLooping( true );
                 }
             }
         }).start();
@@ -339,7 +343,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
                     Rect rect = Imgproc.boundingRect(matOfPoint);
                     Scalar color = new Scalar( 255, 255, 0);
                     if(Imgproc.contourArea(contours.get(i)) > getDifficultydegree()) {
-                        putText(mRgbaFinal," +!!! ALARM !!!",new Point(500,500),
+                        putText(mRgbaFinal," +!!!!!!!!!!!",new Point(500,500),
                                 FONT_HERSHEY_TRIPLEX, 1,new Scalar( 255, 255, 0),1);
                         drawContours(mRgbaFinal, contours, i, color, -1);
                     }
@@ -354,7 +358,7 @@ public class OpenCamera extends Activity implements CameraBridgeViewBase.CvCamer
             );*/
             vibrate();
         }
-        Scalar colorfilter = new Scalar( 10, 150, 10);
+        Scalar colorfilter = new Scalar( 50, 255, 100);
         Mat overlay = new Mat(mRgbaFinal.rows(),mRgbaFinal.cols(),CV_8UC3,colorfilter);
         cvtColor(overlay,overlay,Imgproc.COLOR_BGR2RGB);
         cvtColor(mRgbaFinal,mRgbaFinal,Imgproc.COLOR_BGR2RGB);
