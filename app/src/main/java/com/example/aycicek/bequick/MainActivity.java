@@ -132,12 +132,12 @@ public class MainActivity extends AppCompatActivity {
         boolean checked = ((RadioButton) view).isChecked();
         // Check which radio button was clicked
         switch(view.getId()) {
-            case R.id.front:
+            case R.id.radioFront:
                 if (checked){
                     setCameraData(1);
                 }
                 break;
-            case R.id.back:
+            case R.id.radioBack:
                 if (checked){
                     setCameraData(0);
                 }
