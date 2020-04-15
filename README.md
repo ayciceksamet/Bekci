@@ -33,7 +33,15 @@ https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html
 
 The first frame is taken into an array and got absolute difference with next frame.
 
+## Screens
 
+<p align="center">
+  <img  width="300" height="630" alt='Get it on Google Play' src='gif/2.gif'/>
+</p>
+
+<p align="center">
+  <img  width="450" height="250" alt='Get it on Google Play' src='gif/1.gif'/>
+</p>
 
 
 
